@@ -31,17 +31,190 @@
   .page { display: none; min-height: 100vh; }
   .page.active { display: flex; }
 
-  /* ═══════════════════ LOGIN ═══════════════════ */
+  /* ログインページのスクロール構造 */
   #login-page {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background:
-      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200,169,126,0.10) 0%, transparent 65%),
-      var(--bg);
-    position: relative;
-    overflow: hidden;
+    justify-content: flex-start;
+    overflow-y: auto;
   }
+
+  .login-scroll {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ログインボックスは画面高さいっぱいに */
+  .login-box {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .scroll-hint {
+    text-align: center;
+    margin-top: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    color: var(--muted);
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: .5; }
+    50% { transform: translateY(4px); opacity: 1; }
+  }
+
+  /* ══ 使い方セクション ══ */
+  .howto-section {
+    width: 100%;
+    max-width: 480px;
+    padding: 64px 24px 80px;
+  }
+
+  .howto-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .35em;
+    color: var(--accent);
+    opacity: .7;
+    margin-bottom: 10px;
+  }
+
+  .howto-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .howto-title::after {
+    content: '';
+    position: absolute;
+    bottom: -14px; left: 0;
+    width: 32px; height: 1px;
+    background: var(--accent);
+  }
+
+  .howto-steps { display: flex; flex-direction: column; gap: 0; }
+
+  .howto-step {
+    display: flex;
+    gap: 20px;
+    padding: 28px 0;
+  }
+
+  .step-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--accent);
+    opacity: .35;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 44px;
+  }
+
+  .step-content { flex: 1; }
+
+  .step-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .step-desc strong { color: var(--text); font-weight: 600; }
+
+  .step-example {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    padding: 16px 20px;
+  }
+  .example-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .example-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .example-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: .08em;
+  }
+
+  .qr-sample {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .qr-label {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .step-tip {
+    background: rgba(200,169,126,.07);
+    border: 1px solid rgba(200,169,126,.2);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .tip-icon {
+    color: var(--accent);
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 0 64px;
+  }
+
+  .howto-footer {
+    margin-top: 48px;
+    text-align: center;
+  }
+  .howto-footer a {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .18em;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color .2s, border-color .2s;
+  }
+  .howto-footer a:hover { color: var(--accent); border-color: var(--accent); }
 
   .bg-lines {
     position: absolute;
@@ -58,6 +231,8 @@
     padding: 52px 44px 44px;
     background: var(--surface);
     border: 1px solid var(--border);
+    border-top: none;
+    border-bottom: none;
     animation: fadeUp .6s ease both;
   }
   .login-box::before {
@@ -522,6 +697,18 @@
   }
   .admin-link a:hover { color: var(--accent); border-color: var(--accent); }
 
+  .team-group { margin-bottom: 20px; }
+  .team-group-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    padding: 6px 4px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(200,169,126,.2);
+  }
+
   .toast {
     position: fixed;
     bottom: 32px;
@@ -558,16 +745,113 @@
 <!-- ▸ ログインページ -->
 <div id="login-page" class="page active">
   <div class="bg-lines"></div>
-  <div class="login-box">
-    <p class="login-eyebrow">MEMBER CARD SYSTEM</p>
-    <h1 class="login-title">名刺<br>アプリ</h1>
-    <p class="login-sub">お名前を入力してプロフィールを表示します</p>
-    <label class="field-label">お名前</label>
-    <input id="login-name" class="text-input" type="text" placeholder="例：山田 太郎" autocomplete="off">
-    <button class="btn-primary" onclick="doLogin()">ログイン</button>
-    <p class="error-msg" id="login-error"></p>
-    <div class="admin-link"><a href="#" onclick="showAdminPage(); return false;">管理者ページ</a></div>
-  </div>
+  <div class="login-scroll">
+
+    <!-- ログインボックス -->
+    <div class="login-box">
+      <p class="login-eyebrow">MEMBER CARD SYSTEM</p>
+      <h1 class="login-title">名刺<br>アプリ</h1>
+      <p class="login-sub">お名前を入力してプロフィールを表示します</p>
+      <label class="field-label">お名前</label>
+      <input id="login-name" class="text-input" type="text" placeholder="例：山田 太郎" autocomplete="off">
+      <button class="btn-primary" onclick="doLogin()">ログイン</button>
+      <p class="error-msg" id="login-error"></p>
+      <div class="admin-link"><a href="#" onclick="showAdminPage(); return false;">管理者ページ</a></div>
+      <div class="scroll-hint">↓ 使い方を見る</div>
+    </div>
+
+    <!-- 使い方セクション -->
+    <div class="howto-section">
+      <p class="howto-eyebrow">HOW TO USE</p>
+      <h2 class="howto-title">使い方</h2>
+
+      <div class="howto-steps">
+
+        <!-- STEP 1 -->
+        <div class="howto-step">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <div class="step-title">名前を入力する</div>
+            <div class="step-desc">ケースに記載されている名前を入力してください。<br>苗字と名前の間は<strong>半角スペース</strong>を入れてください。</div>
+            <div class="step-example">
+              <div class="example-label">入力例</div>
+              <div class="example-name">山田 太郎</div>
+              <div class="example-note">← 苗字と名前の間にスペース</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-divider"></div>
+
+        <!-- STEP 2 -->
+        <div class="howto-step">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <div class="step-title">QRコードから開く場合</div>
+            <div class="step-desc">ケースに記載されているQRコードをスキャンすると、このページが開きます。そのまま名前を入力してください。</div>
+            <div class="qr-sample">
+              <svg viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg" style="opacity:.6;">
+                <!-- QRコードのサンプル図 -->
+                <rect width="80" height="80" fill="#1e1e1e"/>
+                <!-- 左上ファインダー -->
+                <rect x="8" y="8" width="20" height="20" fill="none" stroke="#c8a97e" stroke-width="2.5"/>
+                <rect x="13" y="13" width="10" height="10" fill="#c8a97e"/>
+                <!-- 右上ファインダー -->
+                <rect x="52" y="8" width="20" height="20" fill="none" stroke="#c8a97e" stroke-width="2.5"/>
+                <rect x="57" y="13" width="10" height="10" fill="#c8a97e"/>
+                <!-- 左下ファインダー -->
+                <rect x="8" y="52" width="20" height="20" fill="none" stroke="#c8a97e" stroke-width="2.5"/>
+                <rect x="13" y="57" width="10" height="10" fill="#c8a97e"/>
+                <!-- データモジュール（ランダム風） -->
+                <rect x="36" y="8" width="5" height="5" fill="#c8a97e"/>
+                <rect x="44" y="8" width="5" height="5" fill="#c8a97e"/>
+                <rect x="36" y="16" width="5" height="5" fill="#c8a97e"/>
+                <rect x="8" y="36" width="5" height="5" fill="#c8a97e"/>
+                <rect x="16" y="36" width="5" height="5" fill="#c8a97e"/>
+                <rect x="36" y="36" width="5" height="5" fill="#c8a97e"/>
+                <rect x="44" y="36" width="5" height="5" fill="#c8a97e"/>
+                <rect x="52" y="36" width="5" height="5" fill="#c8a97e"/>
+                <rect x="60" y="36" width="5" height="5" fill="#c8a97e"/>
+                <rect x="68" y="36" width="5" height="5" fill="#c8a97e"/>
+                <rect x="36" y="44" width="5" height="5" fill="#c8a97e"/>
+                <rect x="52" y="44" width="5" height="5" fill="#c8a97e"/>
+                <rect x="68" y="44" width="5" height="5" fill="#c8a97e"/>
+                <rect x="36" y="52" width="5" height="5" fill="#c8a97e"/>
+                <rect x="44" y="52" width="5" height="5" fill="#c8a97e"/>
+                <rect x="60" y="52" width="5" height="5" fill="#c8a97e"/>
+                <rect x="36" y="60" width="5" height="5" fill="#c8a97e"/>
+                <rect x="52" y="60" width="5" height="5" fill="#c8a97e"/>
+                <rect x="60" y="68" width="5" height="5" fill="#c8a97e"/>
+                <rect x="68" y="60" width="5" height="5" fill="#c8a97e"/>
+              </svg>
+              <div class="qr-label">QRコードをスキャン</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-divider"></div>
+
+        <!-- STEP 3 -->
+        <div class="howto-step">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <div class="step-title">「ログイン」ボタンを押す</div>
+            <div class="step-desc">名前を正しく入力したら、ログインボタンを押してください。プロフィールページが表示されます。</div>
+            <div class="step-tip">
+              <span class="tip-icon">!</span>
+              名前が見つからない場合は、管理者に登録を依頼してください。
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="howto-footer">
+        <a href="#" onclick="document.querySelector('.login-scroll').scrollTo({top:0,behavior:'smooth'});return false;">↑ トップに戻る</a>
+      </div>
+    </div>
+
+  </div><!-- /login-scroll -->
 </div>
 
 <!-- ▸ プロフィールページ -->
@@ -633,8 +917,9 @@
   <div class="admin-body">
     <div class="admin-list">
       <p class="section-title">登録済みメンバー</p>
-      <div style="margin-bottom:12px;">
-        <button class="btn-primary" style="width:auto;padding:10px 24px;font-size:12px;" onclick="newProfile()">＋ 新規登録</button>
+      <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center;">
+        <button class="btn-primary" style="width:auto;padding:10px 24px;font-size:12px;flex-shrink:0;" onclick="newProfile()">＋ 新規登録</button>
+        <input class="form-input" id="search-input" type="text" placeholder="名前・所属班で検索..." oninput="renderList()" style="margin:0;font-size:13px;">
       </div>
       <div class="profile-list" id="admin-list"></div>
     </div>
@@ -678,6 +963,7 @@
           <button class="btn-save" onclick="saveProfile()">保存</button>
           <button class="btn-cancel" onclick="closeForm()">キャンセル</button>
         </div>
+        <div id="form-error" style="margin-top:12px;font-size:12px;color:var(--danger);min-height:16px;letter-spacing:.04em;"></div>
       </div>
     </div>
   </div>
@@ -769,6 +1055,8 @@ function logout() {
 }
 
 // ── 管理者ページ ──────────────────────────────
+let allProfiles = []; // 全データキャッシュ
+
 function showAdminPage() {
   const user = prompt('管理者ユーザー名:');
   if (!user) return;
@@ -785,30 +1073,69 @@ async function loadAdminList() {
       headers: { 'Authorization': `Basic ${adminAuth}` }
     });
     if (res.status === 401) { alert('認証失敗'); logout(); return; }
-    const list = await res.json();
-    const el = document.getElementById('admin-list');
-    el.innerHTML = list.length === 0
-      ? '<p style="color:var(--muted);font-size:13px;padding:12px 0;">登録なし</p>'
-      : list.map(p => `
+    allProfiles = await res.json();
+    renderList();
+  } catch {
+    showToast('読み込みエラー');
+  }
+}
+
+function renderList() {
+  const q = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+
+  // 検索フィルタ
+  const filtered = q
+    ? allProfiles.filter(p =>
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.furigana || '').toLowerCase().includes(q) ||
+        (p.team || '').toLowerCase().includes(q)
+      )
+    : allProfiles;
+
+  const el = document.getElementById('admin-list');
+  if (filtered.length === 0) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px 0;">該当なし</p>';
+    return;
+  }
+
+  // 所属班ごとにグループ化
+  const groups = {};
+  filtered.forEach(p => {
+    const key = p.team || '（所属班なし）';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  });
+
+  // 班名をソート
+  const sortedKeys = Object.keys(groups).sort((a, b) => {
+    if (a === '（所属班なし）') return 1;
+    if (b === '（所属班なし）') return -1;
+    return a.localeCompare(b, 'ja');
+  });
+
+  el.innerHTML = sortedKeys.map(team => `
+    <div class="team-group">
+      <div class="team-group-label">${team} <span style="font-size:10px;opacity:.6;">${groups[team].length}名</span></div>
+      ${groups[team].map(p => `
         <div class="profile-row" id="row-${p.id}">
           <div>
-            <div class="profile-row-name">${p.name}</div>
-            <div class="profile-row-team">${p.team || '—'} / ${p.gender || '—'} / ${p.age ? p.age+'歳' : '—'}</div>
+            <div class="profile-row-name">${p.name}${p.furigana ? `<span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:10px;font-weight:400;">${p.furigana}</span>` : ''}</div>
+            <div class="profile-row-team">${p.gender || '—'} / ${p.age ? p.age+'歳' : '—'} / ${p.phone || '—'}</div>
           </div>
           <div class="row-actions">
             <button class="btn-sm" onclick="editProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">編集</button>
             <button class="btn-sm danger" onclick="deleteProfile(${p.id}, '${p.name}')">削除</button>
           </div>
         </div>
-      `).join('');
-  } catch {
-    showToast('読み込みエラー');
-  }
+      `).join('')}
+    </div>
+  `).join('');
 }
 
 function newProfile() {
   document.getElementById('form-id').value = '';
   document.getElementById('form-title').textContent = '新規登録';
+  document.getElementById('form-error').textContent = '';
   ['name','furigana','gender','age','team','phone','condition','notes'].forEach(k => {
     document.getElementById(`form-${k}`).value = '';
   });
@@ -818,6 +1145,7 @@ function newProfile() {
 function editProfile(p) {
   document.getElementById('form-id').value = p.id;
   document.getElementById('form-title').textContent = '編集: ' + p.name;
+  document.getElementById('form-error').textContent = '';
   document.getElementById('form-name').value = p.name || '';
   document.getElementById('form-furigana').value = p.furigana || '';
   document.getElementById('form-gender').value = p.gender || '';
@@ -831,22 +1159,47 @@ function editProfile(p) {
 
 function closeForm() {
   document.getElementById('admin-form').style.display = 'none';
+  document.getElementById('form-error').textContent = '';
+}
+
+function setFormError(msg) {
+  document.getElementById('form-error').textContent = msg;
 }
 
 async function saveProfile() {
   const id = document.getElementById('form-id').value;
   const name = document.getElementById('form-name').value.trim();
-  if (!name) { showToast('名前は必須です'); return; }
+  const furigana = document.getElementById('form-furigana').value.trim();
+  const gender = document.getElementById('form-gender').value.trim();
+  const age = document.getElementById('form-age').value;
+  const team = document.getElementById('form-team').value.trim();
+  const phone = document.getElementById('form-phone').value.trim();
+  const condition = document.getElementById('form-condition').value.trim();
+  const notes = document.getElementById('form-notes').value.trim();
+
+  // ── 入力ダブルチェック ──
+  setFormError('');
+  if (!name) { setFormError('名前は必須です'); return; }
+
+  // 同じ名前が既に存在するか（自分以外）
+  const dupName = allProfiles.find(p => p.name === name && String(p.id) !== id);
+  if (dupName) { setFormError(`「${name}」は既に登録されています`); return; }
+
+  // 同じ電話番号が既に存在するか（自分以外）
+  if (phone) {
+    const dupPhone = allProfiles.find(p => p.phone === phone && String(p.id) !== id);
+    if (dupPhone) { setFormError(`この電話番号は「${dupPhone.name}」に既に登録されています`); return; }
+  }
 
   const body = {
     name,
-    furigana: document.getElementById('form-furigana').value.trim() || null,
-    gender: document.getElementById('form-gender').value.trim() || null,
-    age: document.getElementById('form-age').value ? parseInt(document.getElementById('form-age').value) : null,
-    team: document.getElementById('form-team').value.trim() || null,
-    phone: document.getElementById('form-phone').value.trim() || null,
-    condition: document.getElementById('form-condition').value.trim() || null,
-    notes: document.getElementById('form-notes').value.trim() || null,
+    furigana: furigana || null,
+    gender: gender || null,
+    age: age ? parseInt(age) : null,
+    team: team || null,
+    phone: phone || null,
+    condition: condition || null,
+    notes: notes || null,
   };
 
   const url = id ? `${API_BASE}/api/admin/profiles/${id}` : `${API_BASE}/api/admin/profiles`;
@@ -861,13 +1214,13 @@ async function saveProfile() {
       },
       body: JSON.stringify(body)
     });
-    if (res.status === 409) { showToast('同じ名前が既に存在します'); return; }
+    if (res.status === 409) { setFormError('同じ名前が既に存在します（サーバー確認）'); return; }
     if (!res.ok) throw new Error();
     showToast(id ? '更新しました' : '登録しました');
     closeForm();
     loadAdminList();
   } catch {
-    showToast('保存に失敗しました');
+    setFormError('保存に失敗しました。再度お試しください。');
   }
 }
 
