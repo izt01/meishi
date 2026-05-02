@@ -946,6 +946,7 @@
         <div class="form-row">
           <label class="form-label">所属班</label>
           <input class="form-input" id="form-team" type="text" placeholder="Aチーム">
+          <div style="font-size:10px;color:var(--muted);margin-top:6px;letter-spacing:.04em;">入力後にフォーカスを外すと、同じ班の電話番号を自動入力します</div>
         </div>
         <div class="form-row">
           <label class="form-label">電話番号</label>
@@ -1142,6 +1143,25 @@ function newProfile() {
   document.getElementById('admin-form').style.display = 'block';
 }
 
+// 所属班入力時に同じ班の電話番号を自動入力
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('form-team').addEventListener('change', autofillPhone);
+  document.getElementById('form-team').addEventListener('blur', autofillPhone);
+});
+
+function autofillPhone() {
+  const team = document.getElementById('form-team').value.trim();
+  const currentPhone = document.getElementById('form-phone').value.trim();
+  if (!team || currentPhone) return; // 既に入力済みなら上書きしない
+
+  const sameTeam = allProfiles.find(p => p.team === team && p.phone);
+  if (sameTeam) {
+    document.getElementById('form-phone').value = sameTeam.phone;
+    setFormError('');
+    showToast(`「${team}」の電話番号を自動入力しました`);
+  }
+}
+
 function editProfile(p) {
   document.getElementById('form-id').value = p.id;
   document.getElementById('form-title').textContent = '編集: ' + p.name;
@@ -1184,12 +1204,6 @@ async function saveProfile() {
   // 同じ名前が既に存在するか（自分以外）
   const dupName = allProfiles.find(p => p.name === name && String(p.id) !== id);
   if (dupName) { setFormError(`「${name}」は既に登録されています`); return; }
-
-  // 同じ電話番号が既に存在するか（自分以外）
-  if (phone) {
-    const dupPhone = allProfiles.find(p => p.phone === phone && String(p.id) !== id);
-    if (dupPhone) { setFormError(`この電話番号は「${dupPhone.name}」に既に登録されています`); return; }
-  }
 
   const body = {
     name,
