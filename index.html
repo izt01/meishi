@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>名刺アプリ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Shippori+Mincho:wght@400;600;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --card: #1e1e1e;
+    --border: #2a2a2a;
+    --accent: #c8a97e;
+    --accent2: #7ecfb0;
+    --text: #e8e0d4;
+    --muted: #6a6560;
+    --danger: #e07e7e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif JP', serif;
+    min-height: 100vh;
+  }
+
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: flex; }
+
+  /* ═══════════════════ LOGIN ═══════════════════ */
+  #login-page {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200,169,126,0.10) 0%, transparent 65%),
+      var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bg-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px);
+  }
+
+  .login-box {
+    position: relative;
+    width: min(400px, 92vw);
+    padding: 52px 44px 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    animation: fadeUp .6s ease both;
+  }
+  .login-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .login-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .35em;
+    color: var(--accent);
+    margin-bottom: 28px;
+    opacity: .8;
+  }
+
+  .login-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+
+  .login-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  .field-label {
+    font-size: 10px;
+    letter-spacing: .2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .text-input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    padding: 13px 16px;
+    outline: none;
+    transition: border-color .2s;
+    margin-bottom: 20px;
+  }
+  .text-input:focus { border-color: var(--accent); }
+  .text-input::placeholder { color: var(--muted); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #0d0d0d;
+    border: none;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .btn-primary:hover { background: #d9bb91; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  .error-msg {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--danger);
+    text-align: center;
+    min-height: 18px;
+    letter-spacing: .04em;
+  }
+
+  /* ═══════════════════ PROFILE ═══════════════════ */
+  #profile-page {
+    flex-direction: column;
+    background: var(--bg);
+  }
+
+  .pf-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 36px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .pf-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .35em;
+    color: var(--accent);
+    opacity: .7;
+  }
+
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    letter-spacing: .08em;
+    padding: 7px 18px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .pf-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 64px 20px 80px;
+  }
+
+  .meishi-wrap {
+    width: 100%;
+    max-width: 660px;
+    animation: cardIn .5s ease both;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(14px) scale(.985); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* 名刺カード */
+  .meishi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .meishi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .meishi-top {
+    padding: 44px 48px 36px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .meishi-avatar {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #0d0d0d;
+    flex-shrink: 0;
+  }
+
+  .meishi-name-block { flex: 1; }
+
+  .meishi-team-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .28em;
+    color: var(--accent);
+    border: 1px solid rgba(200,169,126,.3);
+    padding: 3px 10px;
+    margin-bottom: 14px;
+  }
+
+  .meishi-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -.01em;
+    margin-bottom: 10px;
+  }
+
+  .meishi-meta-row {
+    display: flex;
+    gap: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .06em;
+  }
+
+  /* 詳細グリッド */
+  .meishi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .meishi-field {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    position: relative;
+    animation: fieldIn .4s ease both;
+  }
+  .meishi-field:nth-child(even) { border-right: none; }
+  .meishi-field.full {
+    grid-column: 1 / -1;
+    border-right: none;
+  }
+  .meishi-field:last-child,
+  .meishi-field.full:last-child { border-bottom: none; }
+
+  @keyframes fieldIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .meishi-field:nth-child(1) { animation-delay: .05s; }
+  .meishi-field:nth-child(2) { animation-delay: .10s; }
+  .meishi-field:nth-child(3) { animation-delay: .15s; }
+  .meishi-field:nth-child(4) { animation-delay: .20s; }
+  .meishi-field:nth-child(5) { animation-delay: .25s; }
+
+  .field-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .22em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .field-val {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .field-val.empty { color: var(--muted); font-style: italic; font-size: 13px; }
+
+  /* 装飾コーナー */
+  .corner {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: var(--accent);
+    border-style: solid;
+    opacity: .3;
+  }
+  .corner.tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+  .corner.br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+  /* フッター */
+  .meishi-footer {
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(200,169,126,0.04);
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .meishi-footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: var(--muted);
+  }
+
+  /* ═══════════════════ ADMIN ═══════════════════ */
+  #admin-page {
+    flex-direction: column;
+    background: var(--bg);
+  }
+
+  .admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 36px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .admin-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .admin-body {
+    display: flex;
+    flex: 1;
+    gap: 0;
+    padding: 32px;
+    gap: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .admin-list { flex: 1; }
+  .admin-form-wrap { width: 360px; flex-shrink: 0; }
+
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .profile-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .profile-row:hover { border-color: rgba(200,169,126,.4); }
+  .profile-row.selected { border-color: var(--accent); }
+
+  .profile-row-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .profile-row-team {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .12em;
+  }
+
+  .row-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+  .admin-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: sticky;
+    top: 20px;
+  }
+
+  .form-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .form-row { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .18em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px;
+    padding: 10px 13px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  textarea.form-input { resize: vertical; min-height: 80px; }
+
+  .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-save {
+    flex: 1;
+    padding: 12px;
+    background: var(--accent);
+    color: #0d0d0d;
+    border: none;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-save:hover { background: #d9bb91; }
+  .btn-cancel {
+    padding: 12px 16px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+
+  .admin-link {
+    text-align: center;
+    margin-top: 24px;
+  }
+  .admin-link a {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .18em;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color .2s, border-color .2s;
+  }
+  .admin-link a:hover { color: var(--accent); border-color: var(--accent); }
+
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    padding: 14px 22px;
+    font-size: 13px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .3s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .admin-body { flex-direction: column; padding: 20px; }
+    .admin-form-wrap { width: 100%; }
+    .admin-form { position: static; }
+    .meishi-grid { grid-template-columns: 1fr; }
+    .meishi-field { border-right: none; }
+    .meishi-top { flex-direction: column; gap: 20px; padding: 32px 24px 28px; }
+    .meishi-name { font-size: 32px; }
+    .meishi-field { padding: 18px 24px; }
+    .login-box { padding: 40px 28px 32px; }
+    .pf-header, .admin-header { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ▸ ログインページ -->
+<div id="login-page" class="page active">
+  <div class="bg-lines"></div>
+  <div class="login-box">
+    <p class="login-eyebrow">MEMBER CARD SYSTEM</p>
+    <h1 class="login-title">名刺<br>アプリ</h1>
+    <p class="login-sub">お名前を入力してプロフィールを表示します</p>
+    <label class="field-label">お名前</label>
+    <input id="login-name" class="text-input" type="text" placeholder="例：山田 太郎" autocomplete="off">
+    <button class="btn-primary" onclick="doLogin()">ログイン</button>
+    <p class="error-msg" id="login-error"></p>
+    <div class="admin-link"><a href="#" onclick="showAdminPage(); return false;">管理者ページ</a></div>
+  </div>
+</div>
+
+<!-- ▸ プロフィールページ -->
+<div id="profile-page" class="page">
+  <header class="pf-header">
+    <span class="pf-logo">MEMBER CARD SYSTEM</span>
+    <button class="btn-ghost" onclick="logout()">← ログアウト</button>
+  </header>
+  <div class="pf-body">
+    <div class="meishi-wrap">
+      <div class="meishi">
+        <div class="corner tl"></div>
+        <div class="corner br"></div>
+
+        <div class="meishi-top">
+          <div class="meishi-avatar" id="pf-avatar">山</div>
+          <div class="meishi-name-block">
+            <div class="meishi-team-badge" id="pf-team-badge">—</div>
+            <div class="meishi-name" id="pf-name">—</div>
+            <div class="meishi-meta-row">
+              <span id="pf-gender">—</span>
+              <span>|</span>
+              <span id="pf-age">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="meishi-grid">
+          <div class="meishi-field">
+            <div class="field-key">電話番号</div>
+            <div class="field-val" id="pf-phone">—</div>
+          </div>
+          <div class="meishi-field">
+            <div class="field-key">所属班</div>
+            <div class="field-val" id="pf-team">—</div>
+          </div>
+          <div class="meishi-field full">
+            <div class="field-key">持病</div>
+            <div class="field-val" id="pf-condition">—</div>
+          </div>
+          <div class="meishi-field full">
+            <div class="field-key">備考</div>
+            <div class="field-val" id="pf-notes">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meishi-footer">
+        <span class="meishi-footer-text">MEMBER PROFILE CARD</span>
+        <span class="meishi-footer-text" id="pf-updated">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ 管理者ページ -->
+<div id="admin-page" class="page">
+  <header class="admin-header">
+    <span class="admin-title">管理者パネル</span>
+    <button class="btn-ghost" onclick="logout()">← ログアウト</button>
+  </header>
+  <div class="admin-body">
+    <div class="admin-list">
+      <p class="section-title">登録済みメンバー</p>
+      <div style="margin-bottom:12px;">
+        <button class="btn-primary" style="width:auto;padding:10px 24px;font-size:12px;" onclick="newProfile()">＋ 新規登録</button>
+      </div>
+      <div class="profile-list" id="admin-list"></div>
+    </div>
+    <div class="admin-form-wrap">
+      <div class="admin-form" id="admin-form" style="display:none;">
+        <p class="form-title" id="form-title">新規登録</p>
+        <input type="hidden" id="form-id">
+        <div class="form-row">
+          <label class="form-label">名前 *</label>
+          <input class="form-input" id="form-name" type="text" placeholder="山田 太郎">
+        </div>
+        <div class="form-row">
+          <label class="form-label">性別</label>
+          <input class="form-input" id="form-gender" type="text" placeholder="男性 / 女性 など">
+        </div>
+        <div class="form-row">
+          <label class="form-label">年齢</label>
+          <input class="form-input" id="form-age" type="number" placeholder="25">
+        </div>
+        <div class="form-row">
+          <label class="form-label">所属班</label>
+          <input class="form-input" id="form-team" type="text" placeholder="Aチーム">
+        </div>
+        <div class="form-row">
+          <label class="form-label">電話番号</label>
+          <input class="form-input" id="form-phone" type="text" placeholder="090-0000-0000">
+        </div>
+        <div class="form-row">
+          <label class="form-label">持病</label>
+          <input class="form-input" id="form-condition" type="text" placeholder="なし">
+        </div>
+        <div class="form-row">
+          <label class="form-label">備考</label>
+          <textarea class="form-input" id="form-notes" placeholder="自由記述"></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" onclick="saveProfile()">保存</button>
+          <button class="btn-cancel" onclick="closeForm()">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 設定 ──────────────────────────────────────
+// デプロイ後、RailwayのAPIのURLに変更してください
+const API_BASE = 'https://meishi-production.up.railway.app';
+
+let adminAuth = null; // Base64 encoded "user:pass"
+
+// ── ユーティリティ ────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showToast(msg, ms = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function val(id, fallback = '—') {
+  const v = document.getElementById(id).value.trim();
+  return v || fallback;
+}
+
+// ── ログイン ──────────────────────────────────
+async function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  if (!name) {
+    document.getElementById('login-error').textContent = 'お名前を入力してください';
+    return;
+  }
+  document.getElementById('login-error').textContent = '';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/login?name=${encodeURIComponent(name)}`);
+    if (res.status === 404) {
+      document.getElementById('login-error').textContent = '名前が見つかりません。管理者に確認してください。';
+      return;
+    }
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    renderProfile(data);
+    showPage('profile-page');
+  } catch {
+    document.getElementById('login-error').textContent = 'サーバーへの接続に失敗しました';
+  }
+}
+
+document.getElementById('login-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function renderProfile(d) {
+  const nameChar = d.name ? d.name[0] : '?';
+  document.getElementById('pf-avatar').textContent = nameChar;
+  document.getElementById('pf-name').textContent = d.name || '—';
+  document.getElementById('pf-gender').textContent = d.gender || '—';
+  document.getElementById('pf-age').textContent = d.age ? `${d.age}歳` : '—';
+  document.getElementById('pf-team').textContent = d.team || '—';
+  document.getElementById('pf-team-badge').textContent = d.team || '所属なし';
+  document.getElementById('pf-phone').textContent = d.phone || '—';
+  document.getElementById('pf-condition').textContent = d.condition || '—';
+
+  const notesEl = document.getElementById('pf-notes');
+  if (d.notes) { notesEl.textContent = d.notes; notesEl.classList.remove('empty'); }
+  else { notesEl.textContent = '記載なし'; notesEl.classList.add('empty'); }
+
+  if (d.updated_at) {
+    const dt = new Date(d.updated_at);
+    document.getElementById('pf-updated').textContent =
+      `更新: ${dt.toLocaleDateString('ja-JP')}`;
+  }
+}
+
+function logout() {
+  adminAuth = null;
+  document.getElementById('login-name').value = '';
+  document.getElementById('login-error').textContent = '';
+  showPage('login-page');
+}
+
+// ── 管理者ページ ──────────────────────────────
+function showAdminPage() {
+  const user = prompt('管理者ユーザー名:');
+  if (!user) return;
+  const pass = prompt('パスワード:');
+  if (!pass) return;
+  adminAuth = btoa(`${user}:${pass}`);
+  loadAdminList();
+  showPage('admin-page');
+}
+
+async function loadAdminList() {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/profiles`, {
+      headers: { 'Authorization': `Basic ${adminAuth}` }
+    });
+    if (res.status === 401) { alert('認証失敗'); logout(); return; }
+    const list = await res.json();
+    const el = document.getElementById('admin-list');
+    el.innerHTML = list.length === 0
+      ? '<p style="color:var(--muted);font-size:13px;padding:12px 0;">登録なし</p>'
+      : list.map(p => `
+        <div class="profile-row" id="row-${p.id}">
+          <div>
+            <div class="profile-row-name">${p.name}</div>
+            <div class="profile-row-team">${p.team || '—'} / ${p.gender || '—'} / ${p.age ? p.age+'歳' : '—'}</div>
+          </div>
+          <div class="row-actions">
+            <button class="btn-sm" onclick="editProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">編集</button>
+            <button class="btn-sm danger" onclick="deleteProfile(${p.id}, '${p.name}')">削除</button>
+          </div>
+        </div>
+      `).join('');
+  } catch {
+    showToast('読み込みエラー');
+  }
+}
+
+function newProfile() {
+  document.getElementById('form-id').value = '';
+  document.getElementById('form-title').textContent = '新規登録';
+  ['name','gender','age','team','phone','condition','notes'].forEach(k => {
+    document.getElementById(`form-${k}`).value = '';
+  });
+  document.getElementById('admin-form').style.display = 'block';
+}
+
+function editProfile(p) {
+  document.getElementById('form-id').value = p.id;
+  document.getElementById('form-title').textContent = '編集: ' + p.name;
+  document.getElementById('form-name').value = p.name || '';
+  document.getElementById('form-gender').value = p.gender || '';
+  document.getElementById('form-age').value = p.age || '';
+  document.getElementById('form-team').value = p.team || '';
+  document.getElementById('form-phone').value = p.phone || '';
+  document.getElementById('form-condition').value = p.condition || '';
+  document.getElementById('form-notes').value = p.notes || '';
+  document.getElementById('admin-form').style.display = 'block';
+}
+
+function closeForm() {
+  document.getElementById('admin-form').style.display = 'none';
+}
+
+async function saveProfile() {
+  const id = document.getElementById('form-id').value;
+  const name = document.getElementById('form-name').value.trim();
+  if (!name) { showToast('名前は必須です'); return; }
+
+  const body = {
+    name,
+    gender: document.getElementById('form-gender').value.trim() || null,
+    age: document.getElementById('form-age').value ? parseInt(document.getElementById('form-age').value) : null,
+    team: document.getElementById('form-team').value.trim() || null,
+    phone: document.getElementById('form-phone').value.trim() || null,
+    condition: document.getElementById('form-condition').value.trim() || null,
+    notes: document.getElementById('form-notes').value.trim() || null,
+  };
+
+  const url = id ? `${API_BASE}/api/admin/profiles/${id}` : `${API_BASE}/api/admin/profiles`;
+  const method = id ? 'PUT' : 'POST';
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${adminAuth}`
+      },
+      body: JSON.stringify(body)
+    });
+    if (res.status === 409) { showToast('同じ名前が既に存在します'); return; }
+    if (!res.ok) throw new Error();
+    showToast(id ? '更新しました' : '登録しました');
+    closeForm();
+    loadAdminList();
+  } catch {
+    showToast('保存に失敗しました');
+  }
+}
+
+async function deleteProfile(id, name) {
+  if (!confirm(`「${name}」を削除しますか？`)) return;
+  try {
+    await fetch(`${API_BASE}/api/admin/profiles/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Basic ${adminAuth}` }
+    });
+    showToast('削除しました');
+    loadAdminList();
+    closeForm();
+  } catch {
+    showToast('削除に失敗しました');
+  }
+}
+</script>
+</body>
+</html>
