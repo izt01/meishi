@@ -587,6 +587,7 @@
           <div class="meishi-name-block">
             <div class="meishi-team-badge" id="pf-team-badge">—</div>
             <div class="meishi-name" id="pf-name">—</div>
+            <div id="pf-furigana" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.12em;margin-bottom:10px;"></div>
             <div class="meishi-meta-row">
               <span id="pf-gender">—</span>
               <span>|</span>
@@ -644,6 +645,10 @@
         <div class="form-row">
           <label class="form-label">名前 *</label>
           <input class="form-input" id="form-name" type="text" placeholder="山田 太郎">
+        </div>
+        <div class="form-row">
+          <label class="form-label">フリガナ</label>
+          <input class="form-input" id="form-furigana" type="text" placeholder="ヤマダ タロウ">
         </div>
         <div class="form-row">
           <label class="form-label">性別</label>
@@ -737,6 +742,7 @@ function renderProfile(d) {
   const nameChar = d.name ? d.name[0] : '?';
   document.getElementById('pf-avatar').textContent = nameChar;
   document.getElementById('pf-name').textContent = d.name || '—';
+  document.getElementById('pf-furigana').textContent = d.furigana || '';
   document.getElementById('pf-gender').textContent = d.gender || '—';
   document.getElementById('pf-age').textContent = d.age ? `${d.age}歳` : '—';
   document.getElementById('pf-team').textContent = d.team || '—';
@@ -803,7 +809,7 @@ async function loadAdminList() {
 function newProfile() {
   document.getElementById('form-id').value = '';
   document.getElementById('form-title').textContent = '新規登録';
-  ['name','gender','age','team','phone','condition','notes'].forEach(k => {
+  ['name','furigana','gender','age','team','phone','condition','notes'].forEach(k => {
     document.getElementById(`form-${k}`).value = '';
   });
   document.getElementById('admin-form').style.display = 'block';
@@ -813,6 +819,7 @@ function editProfile(p) {
   document.getElementById('form-id').value = p.id;
   document.getElementById('form-title').textContent = '編集: ' + p.name;
   document.getElementById('form-name').value = p.name || '';
+  document.getElementById('form-furigana').value = p.furigana || '';
   document.getElementById('form-gender').value = p.gender || '';
   document.getElementById('form-age').value = p.age || '';
   document.getElementById('form-team').value = p.team || '';
@@ -833,6 +840,7 @@ async function saveProfile() {
 
   const body = {
     name,
+    furigana: document.getElementById('form-furigana').value.trim() || null,
     gender: document.getElementById('form-gender').value.trim() || null,
     age: document.getElementById('form-age').value ? parseInt(document.getElementById('form-age').value) : null,
     team: document.getElementById('form-team').value.trim() || null,

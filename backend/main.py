@@ -46,6 +46,7 @@ def require_admin(credentials: HTTPBasicCredentials = Depends(security)):
 # ── スキーマ ──────────────────────────────────────
 class ProfileCreate(BaseModel):
     name: str
+    furigana: Optional[str] = None
     gender: Optional[str] = None
     age: Optional[int] = None
     team: Optional[str] = None
@@ -65,6 +66,7 @@ def startup():
             CREATE TABLE IF NOT EXISTS profiles (
                 id SERIAL PRIMARY KEY,
                 name TEXT UNIQUE NOT NULL,
+                furigana TEXT,
                 gender TEXT,
                 age INTEGER,
                 team TEXT,
@@ -75,6 +77,10 @@ def startup():
                 updated_at TIMESTAMP DEFAULT NOW()
             )
         """)
+    conn.commit()
+    # 既存テーブルへのカラム追加（既にある場合はスキップ）
+    with conn.cursor() as cur:
+        cur.execute("ALTER TABLE profiles ADD COLUMN IF NOT EXISTS furigana TEXT")
     conn.commit()
     conn.close()
 
@@ -106,10 +112,10 @@ def create_profile(data: ProfileCreate, conn=Depends(get_db), admin=Depends(requ
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("""
-                INSERT INTO profiles (name, gender, age, team, phone, condition, notes)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO profiles (name, furigana, gender, age, team, phone, condition, notes)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING *
-            """, (data.name, data.gender, data.age, data.team, data.phone, data.condition, data.notes))
+            """, (data.name, data.furigana, data.gender, data.age, data.team, data.phone, data.condition, data.notes))
             row = cur.fetchone()
         conn.commit()
         return dict(row)
@@ -123,9 +129,9 @@ def update_profile(profile_id: int, data: ProfileUpdate, conn=Depends(get_db), a
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("""
             UPDATE profiles
-            SET name=%s, gender=%s, age=%s, team=%s, phone=%s, condition=%s, notes=%s, updated_at=NOW()
+            SET name=%s, furigana=%s, gender=%s, age=%s, team=%s, phone=%s, condition=%s, notes=%s, updated_at=NOW()
             WHERE id=%s RETURNING *
-        """, (data.name, data.gender, data.age, data.team, data.phone, data.condition, data.notes, profile_id))
+        """, (data.name, data.furigana, data.gender, data.age, data.team, data.phone, data.condition, data.notes, profile_id))
         row = cur.fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="プロフィールが見つかりません")
