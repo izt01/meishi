@@ -216,6 +216,52 @@
   }
   .howto-footer a:hover { color: var(--accent); border-color: var(--accent); }
 
+  /* プロフィールページ説明 */
+  .pf-scroll-hint {
+    text-align: center;
+    margin: 20px 0 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    color: var(--muted);
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  .pf-guide {
+    margin-top: 48px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .pf-guide-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pf-guide-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .pf-guide-label {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .pf-guide-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
   .bg-lines {
     position: absolute;
     inset: 0;
@@ -767,42 +813,21 @@
 
       <div class="howto-steps">
 
-        <!-- STEP 1 -->
+        <!-- STEP 1 → QRコード -->
         <div class="howto-step">
           <div class="step-number">01</div>
           <div class="step-content">
-            <div class="step-title">名前を入力する</div>
-            <div class="step-desc">ケースに記載されている名前を入力してください。<br>苗字と名前の間は<strong>半角スペース</strong>を入れてください。</div>
-            <div class="step-example">
-              <div class="example-label">入力例</div>
-              <div class="example-name">山田 太郎</div>
-              <div class="example-note">← 苗字と名前の間にスペース</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step-divider"></div>
-
-        <!-- STEP 2 -->
-        <div class="howto-step">
-          <div class="step-number">02</div>
-          <div class="step-content">
-            <div class="step-title">QRコードから開く場合</div>
+            <div class="step-title">QRコードから開く</div>
             <div class="step-desc">ケースに記載されているQRコードをスキャンすると、このページが開きます。そのまま名前を入力してください。</div>
             <div class="qr-sample">
               <svg viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg" style="opacity:.6;">
-                <!-- QRコードのサンプル図 -->
                 <rect width="80" height="80" fill="#1e1e1e"/>
-                <!-- 左上ファインダー -->
                 <rect x="8" y="8" width="20" height="20" fill="none" stroke="#c8a97e" stroke-width="2.5"/>
                 <rect x="13" y="13" width="10" height="10" fill="#c8a97e"/>
-                <!-- 右上ファインダー -->
                 <rect x="52" y="8" width="20" height="20" fill="none" stroke="#c8a97e" stroke-width="2.5"/>
                 <rect x="57" y="13" width="10" height="10" fill="#c8a97e"/>
-                <!-- 左下ファインダー -->
                 <rect x="8" y="52" width="20" height="20" fill="none" stroke="#c8a97e" stroke-width="2.5"/>
                 <rect x="13" y="57" width="10" height="10" fill="#c8a97e"/>
-                <!-- データモジュール（ランダム風） -->
                 <rect x="36" y="8" width="5" height="5" fill="#c8a97e"/>
                 <rect x="44" y="8" width="5" height="5" fill="#c8a97e"/>
                 <rect x="36" y="16" width="5" height="5" fill="#c8a97e"/>
@@ -825,6 +850,22 @@
                 <rect x="68" y="60" width="5" height="5" fill="#c8a97e"/>
               </svg>
               <div class="qr-label">QRコードをスキャン</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-divider"></div>
+
+        <!-- STEP 2 → 名前入力 -->
+        <div class="howto-step">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <div class="step-title">名前を入力する</div>
+            <div class="step-desc">ケースに記載されている名前を入力してください。<br>苗字と名前の間は<strong>半角スペース</strong>を入れてください。</div>
+            <div class="step-example">
+              <div class="example-label">入力例</div>
+              <div class="example-name">山田 太郎</div>
+              <div class="example-note">← 苗字と名前の間にスペース</div>
             </div>
           </div>
         </div>
@@ -882,7 +923,7 @@
 
         <div class="meishi-grid">
           <div class="meishi-field">
-            <div class="field-key">電話番号</div>
+            <div class="field-key">緊急連絡先（電話番号）</div>
             <div class="field-val" id="pf-phone">—</div>
           </div>
           <div class="meishi-field">
@@ -904,6 +945,64 @@
         <span class="meishi-footer-text">MEMBER PROFILE CARD</span>
         <span class="meishi-footer-text" id="pf-updated">—</span>
       </div>
+
+      <!-- ↓ スクロールで見える説明 -->
+      <div class="pf-scroll-hint">↓ このカードについて</div>
+
+      <div class="pf-guide">
+        <p class="howto-eyebrow" style="margin-bottom:10px;">ABOUT THIS CARD</p>
+        <h2 class="howto-title" style="font-size:22px;margin-bottom:32px;">カードの見方</h2>
+
+        <div class="pf-guide-item">
+          <div class="pf-guide-icon">👤</div>
+          <div class="pf-guide-text">
+            <div class="pf-guide-label">名前 / フリガナ / 性別 / 年齢</div>
+            <div class="pf-guide-desc">本人の基本情報です。</div>
+          </div>
+        </div>
+
+        <div class="pf-guide-item">
+          <div class="pf-guide-icon">🏷️</div>
+          <div class="pf-guide-text">
+            <div class="pf-guide-label">所属班</div>
+            <div class="pf-guide-desc">この方が所属するチーム・班の名称です。</div>
+          </div>
+        </div>
+
+        <div class="pf-guide-item">
+          <div class="pf-guide-icon">📞</div>
+          <div class="pf-guide-text">
+            <div class="pf-guide-label">緊急連絡先（電話番号）</div>
+            <div class="pf-guide-desc">緊急時に連絡できる電話番号です。事故や体調不良の際にすぐ確認できます。所属班で共通の番号が登録されている場合があります。</div>
+          </div>
+        </div>
+
+        <div class="pf-guide-item">
+          <div class="pf-guide-icon">🏥</div>
+          <div class="pf-guide-text">
+            <div class="pf-guide-label">持病</div>
+            <div class="pf-guide-desc">救急対応や薬の使用判断に必要な情報です。緊急時に医療関係者へ伝えてください。</div>
+          </div>
+        </div>
+
+        <div class="pf-guide-item" style="border-bottom:none;">
+          <div class="pf-guide-icon">📝</div>
+          <div class="pf-guide-text">
+            <div class="pf-guide-label">備考</div>
+            <div class="pf-guide-desc">アレルギー・服薬情報など、緊急時に役立つ追加情報が記載されています。</div>
+          </div>
+        </div>
+
+        <div class="step-tip" style="margin-top:24px;">
+          <span class="tip-icon">!</span>
+          このカードの情報は緊急時に使用することを想定しています。内容に変更がある場合は管理者にご連絡ください。
+        </div>
+
+        <div class="howto-footer" style="margin-top:36px;">
+          <a href="#" onclick="document.getElementById('profile-page').scrollTo({top:0,behavior:'smooth'});return false;">↑ カードに戻る</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
