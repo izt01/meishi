@@ -86,12 +86,32 @@ def startup():
 
 # ── 公開エンドポイント ────────────────────────────
 
+def normalize_name(name: str) -> str:
+    """全角スペース→半角、複数スペース→1つ、前後トリム"""
+    import re
+    name = name.replace('\u3000', ' ')  # 全角スペース
+    name = re.sub(r' +', ' ', name)     # 複数スペース→1つ
+    return name.strip()
+
 @app.get("/api/login")
 def login(name: str, conn=Depends(get_db)):
-    """名前でログイン→プロフィール返却"""
+    """名前でログイン（スペースあり・なし・全角スペース対応）"""
+    normalized = normalize_name(name)
+    # スペースを除去した版
+    no_space = normalized.replace(' ', '')
+
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT * FROM profiles WHERE name = %s", (name,))
+        # ① 完全一致
+        cur.execute("SELECT * FROM profiles WHERE name = %s", (normalized,))
         row = cur.fetchone()
+        if not row:
+            # ② スペースなし入力 → DB上のスペースあり名前を検索
+            cur.execute(
+                "SELECT * FROM profiles WHERE REPLACE(name, ' ', '') = %s OR REPLACE(name, '\u3000', '') = %s",
+                (no_space, no_space)
+            )
+            row = cur.fetchone()
+
     if not row:
         raise HTTPException(status_code=404, detail="名前が見つかりません")
     return dict(row)
